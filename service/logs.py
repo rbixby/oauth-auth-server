@@ -13,7 +13,7 @@ class GelfFormatter(logging.Formatter):
             'short_message': record.getMessage(),
             'timestamp': record.created,
             'level': int(record.levelno / 10),
-            '_level_name': record._level_name,
+            '_level_name': record.levelname,
             '_file': record.filename,
             '_module': record.module,
             '_func': record.funcName,
