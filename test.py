@@ -5,3 +5,6 @@ alist.append(adict)
 for a in alist:
     print(type(a))
     print(a["client_id"])
+
+for b in alist:
+    print(b["client_secret"])

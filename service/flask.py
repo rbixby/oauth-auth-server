@@ -2,9 +2,10 @@ from flask import (
     Flask,
     request,
 )
-from flask_restful import Api
-from flask_talisman import Talisman
-from service.routes import add_resources
+# from flask_restful import Api
+# from flask_talisman import Talisman
+# from service.routes import add_resources
+from service.routes import add_endpoints
 from service.config import get_config
 
 from . import logger
@@ -15,18 +16,21 @@ import gzip
 
 def create_app():
     # config = get_config()
+    logger.info("Creating the app.")
     app = Flask(__name__)
 
-    Talisman(app, force_https=False)
-
-    api = Api(app, catch_all_404s=True)
+    # Talisman(app, force_https=False)
+    logger.info("Talisman is set up.")
+    # api = Api(app, catch_all_404s=True)
 
     # app.config['redis'] = redis.StrictRedis(
     #     decode_responses=True,
     #     host=config['REDIS_HOST'],
     #     port=config['REDIS_PORT'])
 
-    add_resources(api)
+    # add_resources(api)
+    # app.add_endpoints()
+    add_endpoints(app)
 
     def should_compress(response):
         config = get_config()

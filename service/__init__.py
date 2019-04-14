@@ -1,4 +1,5 @@
 import logging
+from logging.handlers import RotatingFileHandler
 
 from service.logs import GelfFormatter
 from service.config import (
@@ -13,7 +14,7 @@ def _create_logger():
     log_level = getattr(logging, config['LOG_LEVEL'].upper(), logging.INFO)
     logger = logging.getLogger(__name__)
     if config['LOG_FILE'] is not None:
-        fh = logging.FileHandler(config['LOG_FILE'])
+        fh = RotatingFileHandler(config['LOG_FILE'])
     else:
         fh = logging.StreamHandler()
     fh.setFormatter(GelfFormatter())

@@ -1,4 +1,3 @@
-# import requests
 import uuid
 from flask import request, render_template, make_response
 from flask_restful import Resource
@@ -10,6 +9,7 @@ CLIENTS = [{"client_id": "oauth-client-1",
             "scope": "foo bar"}]
 
 CODES = {}
+REQUESTS = {}
 
 
 class AuthorizationServer(Resource):
@@ -22,46 +22,49 @@ class AuthorizationServer(Resource):
 
     def get(self):
         logger.info("Received a GET.")
-        # headers = {'Contentf-Type': 'text/html'}
+        headers = {'Contentf-Type': 'text/html'}
         resp = {}
-        if request.args:
-            resp["resquest.args"] = "True"
+        if not request.args:
+            resp["error"] = "Missing request parameters."
+            return resp
 
-        resp["got"] = "here"
+        client = self.get_client(request.args)
+        redirect_uri = self.get_redirect_uri(request.args, client)
+        if not client:
+            # Check for known client
+            logger.error('Unknown client %s', request.args['client_id'])
+            resp["error"] = "Unknown client."
+            return resp
+        elif not redirect_uri:
+            logger.error("Mismatched redirect URI, expected %s got %s", client["redirect_uris"], request.args["redirect_uri"])
+            resp["error"] = "Invalid redirect URI."
+            return resp
+        else:
+            # Check for the scopes
+            req_scope = None
+            client_scope = client["scope"].split(" ")
+            if request.args['scope']:
+                req_scope = request.args['scope'].split(' ')
 
-        return resp
-        # return make_response(render_template("error.html", error="Got here!"), 200, headers)
-        # for k, v in request.args:
-        #     logger.info("Key: {}, Value: {}".format(k, v))
+            same = [item for item in req_scope if item in client_scope]
+            if len(same) == 0:
+                # client asked for a scope it could not have
+                resp["error"] = "invalid_scope"
+                return resp
 
-        # client = self.get_client(request.args["client_id"])
-        # if not client:
-        #     # Check for known client
-        #     logger.error('Unknown client %s', request.args['client_id'])
-        #     render_template("error.html", error="Unknown client.")
-        # elif request.args["redirect_uri"] not in client:
-        #     logger.error("Mismatched redirect URI, expected %s got %s", client["redirect_uris"], request.args["redirect_uri"])
-        #     render_template("error.html", error="Invalid redirect URI.")
-        # else:
-        #     render_template("error.html", error="I got here.")
-        # Check for the scopes
-        # req_scope = None
-        # client_scope = client["scope"].split(" ")
-        # if request.args['scope']:
-        #     req_scope = request.args['scope'].split(' ')
+            reqid = self.generate_auth_code()
+            REQUESTS[reqid] = request.path
 
-        # same = [item for item in req_scope if item in client_scope]
-        # if len(same) == 0:
-        #     # client asked for a scope it could not have
-        #     params = {"error": "invalid_scope"}
-        #     callback_url = request.args['redirect_uri']
-        #     response = requests.get(callback_url, params=params)
-        #     response.history
-
+            return make_response(render_template("authorize.html", reqid=reqid, scope=req_scope, client=client), 200, headers)
         # auth_code = self.generate_auth_code()
         # CODES[auth_code]
 
     def get_client(self, args):
+        '''
+        Gets and validates the client_id
+        '''
+        logger.info(type(args))
+        logger.info("The request.args {}".format(args))
         if "client_id" in args:
             client_id = args["client_id"]
             for client in self.clients:
@@ -69,6 +72,19 @@ class AuthorizationServer(Resource):
                     return client
                 else:
                     return None
+        else:
+            return None
+
+    def get_redirect_uri(self, args, client):
+        '''
+        Gets and validates the redirect uri.
+        '''
+        if "redirect_uri" in args:
+            redirect_uri = args["redirect_uri"]
+            if redirect_uri in client["redirect_uris"]:
+                return redirect_uri
+            else:
+                return None
         else:
             return None
 
