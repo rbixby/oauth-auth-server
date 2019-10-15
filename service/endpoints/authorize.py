@@ -1,14 +1,11 @@
 from flask import request, render_template, make_response
-from service.helpers.auth_helper import get_client, get_redirect_uri, generate_auth_code
+from service.helpers.auth_helper import get_client, get_redirect_uri, generate_auth_code, REQUESTS
 from service import logger
 
 CLIENTS = [{"client_id": "oauth-client-1",
             "client_secret": "oauth-client-secret-1",
             "redirect_uris": ["http://localhost:9000/callback"],
             "scope": "foo bar"}]
-
-CODES = {}
-REQUESTS = {}
 
 
 def authorize():

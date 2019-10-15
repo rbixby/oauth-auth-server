@@ -1,6 +1,7 @@
 from flask import (
     Flask,
     request,
+    render_template
 )
 # from flask_restful import Api
 # from flask_talisman import Talisman
@@ -31,6 +32,15 @@ def create_app():
     # add_resources(api)
     # app.add_endpoints()
     add_endpoints(app)
+
+    def page_not_found(e):
+        return render_template('404.html'), 404
+
+    def method_not_allowed(e):
+        return render_template('405.html'), 405
+
+    app.register_error_handler(404, page_not_found)
+    app.register_error_handler(405, method_not_allowed)
 
     def should_compress(response):
         config = get_config()

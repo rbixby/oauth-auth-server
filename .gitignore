@@ -1,6 +1,6 @@
 # Environment
 .vscode/
-venv/
+venv
 
 *.log
 *.pyc

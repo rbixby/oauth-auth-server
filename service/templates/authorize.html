@@ -49,7 +49,7 @@
 		  <p><b>logo:</b> <img src="{{ client.logo_uri }}" /></p>
           {% endif %}
 
-      <form class="form" autocomplete="on" action="{{url_for('approve')}}" method="GET">
+      <form class="form" autocomplete="on" action="{{url_for('approve')}}" method="POST">
         <input type="hidden" name="reqid" value="{{reqid}}">
         {% if scope %}
           <p>The client is requesting access to the following:</p>
