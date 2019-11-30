@@ -8,6 +8,7 @@ from service import logger
 
 ENDPOINTS = [
     ('/authorize', 'authorize', authorize),
+    ('/approve', 'approve', approve),
     ('/token', 'token', token)
     # ('/approve', 'approve', approve)
 ]

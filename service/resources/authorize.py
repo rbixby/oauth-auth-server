@@ -22,7 +22,7 @@ class AuthorizationServer(Resource):
 
     def get(self):
         logger.info("Received a GET.")
-        headers = {'Contentf-Type': 'text/html'}
+        headers = {'Content-Type': 'text/html'}
         resp = {}
         if not request.args:
             resp["error"] = "Missing request parameters."

@@ -21,7 +21,7 @@ def create_app():
     app = Flask(__name__)
 
     # Talisman(app, force_https=False)
-    logger.info("Talisman is set up.")
+    # logger.info("Talisman is set up.")
     # api = Api(app, catch_all_404s=True)
 
     # app.config['redis'] = redis.StrictRedis(

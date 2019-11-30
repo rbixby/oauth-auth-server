@@ -14,7 +14,7 @@ def authorize():
     resp = {}
     if not request.args:
         resp["error"] = "Missing request parameters."
-        return resp
+        return make_response(render_template("error.html", error='Missing request parameters.'), 200, headers)
 
     client = get_client(request.args)
     redirect_uri = get_redirect_uri(request.args, client)
@@ -22,7 +22,7 @@ def authorize():
         # Check for known client
         logger.error('Unknown client %s', request.args['client_id'])
         resp["error"] = "Unknown client."
-        return resp
+        return make_response(render_template("error.html", error='Unknown client.'), 400, headers)
     elif not redirect_uri:
         logger.error("Mismatched redirect URI, expected %s got %s", client["redirect_uris"], request.args["redirect_uri"])
         resp["error"] = "Invalid redirect URI."
@@ -38,10 +38,10 @@ def authorize():
         if len(same) == 0:
             # client asked for a scope it could not have
             resp["error"] = "invalid_scope"
-            return resp
+            return make_response(render_template("error.html", error='Invalid Scope'), 400, headers)
 
         reqid = generate_auth_code()
-        REQUESTS[reqid] = request.path
+        REQUESTS[reqid] = request.query_string
 
         return make_response(render_template("authorize.html", reqid=reqid, scope=req_scope, client=client), 200, headers)
 
