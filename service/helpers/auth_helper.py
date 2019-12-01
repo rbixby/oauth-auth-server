@@ -27,6 +27,31 @@ def get_client(args):
         return None
 
 
+def get_client_from_id(id):
+    ''' Gets and validates the client
+    '''
+    for client in CLIENTS:
+        if id in client.values():
+            return client
+        else:
+            return None
+
+
+def get_client_from_query(params):
+    '''
+    Gets and validates the client_id
+    '''
+    if "client_id" in params:
+        client_id = params['client_id'][0]
+        for client in CLIENTS:
+            if client_id in client.values():
+                return client
+            else:
+                return None
+    else:
+        return None
+
+
 def get_redirect_uri(args, client):
     '''
     Gets and validates the redirect uri.
