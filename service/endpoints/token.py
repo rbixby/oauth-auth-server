@@ -44,6 +44,6 @@ def token():
                 access_token = generate_access_token()
 
                 r = redis.Redis()
-                r.hmset()
+                r.hmset(access_token)
 
     return make_response(render_template('error.html', error='Not Supported Yet.'), 503, headers)
