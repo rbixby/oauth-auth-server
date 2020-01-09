@@ -69,3 +69,7 @@ def get_redirect_uri(args, client):
 def generate_auth_code():
     auth_array = str(uuid.uuid4()).split("-")
     return auth_array[0]
+
+
+def generate_access_token():
+    return str(uuid.uuid4()).replace('-', '')

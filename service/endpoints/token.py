@@ -1,6 +1,7 @@
 import base64
+import redis
 from flask import request, make_response, render_template
-from service.helpers.auth_helper import get_client_from_id
+from service.helpers.auth_helper import get_client_from_id, generate_access_token, CODES
 from service import logger
 
 
@@ -33,5 +34,16 @@ def token():
     if client_secret != client['client_secret']:
         logger.warn('Mismatched client secret.')
         return 'Invalid client', 401
+
+    if request.form['grant_type'] and request.form['grant_type'] == 'authorization_code':
+
+        auth_code = CODES.pop(request.form['code'])
+
+        if auth_code:
+            if auth_code['client_id'] == client_id:
+                access_token = generate_access_token()
+
+                r = redis.Redis()
+                r.hmset()
 
     return make_response(render_template('error.html', error='Not Supported Yet.'), 503, headers)

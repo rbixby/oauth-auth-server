@@ -43,7 +43,7 @@ def approve():
                     return make_response(render_template('error.html', error='Invalid Scope'), 400, headers)
 
                 # Save for later. A dictionary of stuff
-                CODES[code] = {'authorizationRequest': query, 'scope': scope}
+                CODES[code] = {'authorizationRequest': query, 'scope': scope, 'client_id': client['client_id']}
 
                 # Build the redirect url
                 redirect_uri = params['redirect_uri'][0]
